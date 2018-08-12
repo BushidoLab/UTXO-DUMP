@@ -87,7 +87,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
     while len(joinsplits) != 0:
         f = new_utxo_file(output_dir, file_num)  #open a new file
-        a = new_utxo_file(output_dir + ".json", file_num)  #open a new file
+        a = new_utxo_file(output_dir + "/json", file_num)  #open a new file
         a.write("[")
         for value in joinsplits:
             lengthStr = "{0:b}".format(len(value)) #bytes length of the transaction
