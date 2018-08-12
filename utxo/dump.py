@@ -99,13 +99,13 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             print("Transaction: %d",  trans_counter)
             print(hexlify(value))
             print() 
-            if(file_num == blkFile + 1 and trans_counter > 5):
+            if(file_num + 1 == blkFile and trans_counter > 5):
                 print("Breaking from for loop")
                 break
             if maxT != 0 and trans_counter >= maxT:
                 break
         #remove objects from array that were written
-        if(file_num == blkFile + 1):
+        if(file_num + 1 == blkFile):
             print("Breaking from while loop")
             break
         joinsplits = joinsplits[trans_counter:]
