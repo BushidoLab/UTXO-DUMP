@@ -13,6 +13,7 @@ from utxo.util import new_utxo_file, utxo_file_name
 from blockdb import read_blockfile
 
 
+
 def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
     
     cmd = "{} -reindex-chainstate -datadir=\"{}\" -stopatheight={}".format(
@@ -86,6 +87,8 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
     while len(joinsplits) != 0:
         f = new_utxo_file(output_dir, file_num)  #open a new file
+        a = new_utxo_file(output_dir + ".json", file_num)  #open a new file
+        a.write("[")
         for value in joinsplits:
             lengthStr = "{0:b}".format(len(value)) #bytes length of the transaction
             #format binary length in big-endian (32 bit) format
@@ -94,13 +97,17 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
                     lengthStr = "{0:b}".format(0) + lengthStr
             f.write(lengthStr) #write length of the transaction
             f.write(value)#write actual z-utxo
+
+            a.write("\"" + value + "\",")#write actual z-utxo
+            a.write(value)
+
             globalTransactionCounter += 1
             trans_counter += 1
             trans_z_total += 1
             print("Transaction: %d",  trans_counter)
             print(hexlify(value))
             print() 
-            if(blkFile >= 1 and trans_counter > 5):
+            if(blkFile >= 1 and trans_counter > 20):
                 print("Breaking from for loop")
                 break
             if maxT != 0 and trans_counter >= maxT:
@@ -122,6 +129,10 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
                 break
         file_num += 1
         f.close()
+        a.write("]")
+        a.close()
+    a.write("]")   
+    a.close()
     f.close()
     print("##########################################")
     print 'Total Z written: \t%s' % trans_z_total
