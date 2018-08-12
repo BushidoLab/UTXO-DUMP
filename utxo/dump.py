@@ -38,54 +38,53 @@ def get_magic(network, coin):
 
 
 def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num, z_address, network, coin, t_address):
-    #get magic for the provided network and coin
-    magic = get_magic(network, coin)
-    fileNumber = file_num
-    print "file_num: ", file_num
-    print "fileNumber: ", fileNumber
-    returnObject = {}
-    globalTransactionCounter = 0 #keep track of total transaction 
-    #keep track of created files
-
+    
+    magic = get_magic(network, coin) #get magic for the provided network and coin
+    file_num = file_num #keep track of created files
+    trans_total = 0 #keep track of total transaction 
+    ret = {}
+    
     #write regular utxo (t-transactions)
     if(t_address):
-        returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, fileNumber)
-        print "Total T-files written: \t%d " % returnObject['fileNumber']
-        print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
+        ret = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num)
+        ret['file_num'] = file_num + 1
+        print "Total T-files written: \t%d " % ret['file_num']
+        print  "utxo-{:05}.bin".format(file_num) + " - utxo-{:05}.bin".format(ret['file_num'])
     else:
-        returnObject['fileNumber'] = fileNumber
-        returnObject['globalTransactionCounter'] = 0
+        ret['file_num'] = file_num
+        ret['trans_total'] = 0
     
     if z_address:
-        globalTransactionCounter = returnObject['globalTransactionCounter']
-        fileNumber = int(returnObject['fileNumber'])
-        returnObject = {}
-        returnObject = dump_jointsplits(datadir, output_dir, file_size, maxT, globalTransactionCounter, fileNumber + 1, magic)
+        trans_total = ret['trans_total']
+        file_num = int(ret['file_num'])
+        ret = {}
+        ret = dump_jointsplits(datadir, output_dir, file_size, maxT, trans_total, file_num + 1, magic)
         
-        print "Total Z-files written: \t%d " % (int(returnObject['fileNumber']) - int(fileNumber) + 1)
-        print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
+        print "Total Z-files written: \t%d " % (int(ret['file_num']) - int(file_num))
+        print  "utxo-{:05}.bin".format(file_num) + " - utxo-{:05}.bin".format(ret['file_num'])
 
-        globalTransactionCounter = returnObject['globalTransactionCounter']
-        fileNumber = returnObject['fileNumber']
+        trans_total = ret['trans_total']
+        file_num = ret['file_num']
     else:
-        globalTransactionCounter = returnObject['globalTransactionCounter']
-        fileNumber = returnObject['fileNumber']
+        trans_total = ret['trans_total']
+        file_num = ret['file_num']
 
-    print "Total T+Z written: \t%d " % globalTransactionCounter
-    print "Total files created: \t", fileNumber - file_num + 1
+    print "Total T+Z written: \t%d " % trans_total
+    print "Total files created: \t", file_num - file_num + 1
     print("##########################################")
     return
 
 
 def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fileNumber, magic):
-    transaction = 0 #keep track of transcations per file
-    transactionTotal = 0
-    numberOfFilesToRead = 20
+    trans_counter = 0 #keep track of transcations per file
+    trans_z_total = 0
+    maxBlockFile = 9999
     blkFile = 0
+    file_num = fileNumber
 
     joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
     while len(joinsplits) != 0:
-        f = new_utxo_file(output_dir, fileNumber)  #create and open a new file
+        f = new_utxo_file(output_dir, file_num)  #open a new file
         for value in joinsplits:
             lengthStr = "{0:b}".format(len(value)) #bytes length of the transaction
             #format binary length in big-endian (32 bit) format
@@ -93,27 +92,37 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
                 while len(lengthStr) < 32:
                     lengthStr = "{0:b}".format(0) + lengthStr
             f.write(lengthStr) #write length of the transaction
-            f.write(value)     #write actual transaction
+            f.write(value)
+            print("Transaction: %d",  trans_counter)
+            print(hexlify(value))
+            print()     #write actual transaction
             globalTransactionCounter += 1
-            transaction += 1
-            transactionTotal += 1
-            if maxT != 0 and transaction >= maxT:
+            trans_counter += 1
+            trans_z_total += 1
+            if(file_num == fileNumber + 1 and trans_counter > 5):
+                print("Breaking from for loop")
+                break
+            if maxT != 0 and trans_counter >= maxT:
                 break
         #remove objects from array that were written
-        joinsplits = joinsplits[transaction:]
-        transaction = 0
-        if(len(joinsplits) == 0 and (blkFile <= numberOfFilesToRead)):
+        if(file_num == fileNumber + 1):
+            print("Breaking from while loop")
+            break
+        joinsplits = joinsplits[trans_counter:]
+        trans_counter = 0
+        if(len(joinsplits) == 0 and (blkFile <= maxBlockFile)):
             try: 
                 blkFile += 1
                 joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
             except IOError:
                 print("Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % (datadir, blkFile))
                 break
-        fileNumber += 1
+        file_num += 1
         f.close()
+    f.close()
     print("##########################################")
-    print 'Total Z written: \t%s' % transactionTotal
-    return { 'globalTransactionCounter': globalTransactionCounter, 'fileNumber': fileNumber }
+    print 'Total Z written: \t%s' % trans_z_total
+    return { 'trans_total': globalTransactionCounter, 'file_num': file_num }
 
 def dump_utxos(datadir, output_dir, n, convert_segwit,
                maxT, debug, fileNum):
@@ -160,5 +169,5 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
     print("##########################################")
     print("Total T written: \t%d" % j)
     print("##########################################")
-    return { 'globalTransactionCounter': j, 'fileNumber': k }
+    return { 'trans_total': j, 'file_num': k }
 
