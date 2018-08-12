@@ -82,6 +82,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     blkFile = 0
     file_num = fileNumber
 
+    print("Extracting joinsplits from " + datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat")
     joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
     while len(joinsplits) != 0:
         f = new_utxo_file(output_dir, file_num)  #open a new file
@@ -99,13 +100,13 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             print("Transaction: %d",  trans_counter)
             print(hexlify(value))
             print() 
-            if(file_num + 1 == blkFile and trans_counter > 5):
+            if(blkFile >= 1 and trans_counter > 5):
                 print("Breaking from for loop")
                 break
             if maxT != 0 and trans_counter >= maxT:
                 break
         #remove objects from array that were written
-        if(file_num + 1 == blkFile):
+        if(blkFile >= 1):
             print("Breaking from while loop")
             break
         joinsplits = joinsplits[trans_counter:]
@@ -113,7 +114,9 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
         if(len(joinsplits) == 0 and (blkFile <= maxBlockFile)):
             try: 
                 blkFile += 1
+                print("Extracting joinsplits from " + datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat")
                 joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
+                print()
             except IOError:
                 print("Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % (datadir, blkFile))
                 break
