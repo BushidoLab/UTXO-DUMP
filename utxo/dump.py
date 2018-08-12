@@ -92,20 +92,20 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
                 while len(lengthStr) < 32:
                     lengthStr = "{0:b}".format(0) + lengthStr
             f.write(lengthStr) #write length of the transaction
-            f.write(value)
-            print("Transaction: %d",  trans_counter)
-            print(hexlify(value))
-            print()     #write actual transaction
+            f.write(value)#write actual z-utxo
             globalTransactionCounter += 1
             trans_counter += 1
             trans_z_total += 1
-            if(file_num == fileNumber + 1 and trans_counter > 5):
+            print("Transaction: %d",  trans_counter)
+            print(hexlify(value))
+            print() 
+            if(file_num == blkFile + 1 and trans_counter > 5):
                 print("Breaking from for loop")
                 break
             if maxT != 0 and trans_counter >= maxT:
                 break
         #remove objects from array that were written
-        if(file_num == fileNumber + 1):
+        if(file_num == blkFile + 1):
             print("Breaking from while loop")
             break
         joinsplits = joinsplits[trans_counter:]
