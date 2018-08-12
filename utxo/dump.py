@@ -58,7 +58,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
         trans_total = ret['trans_total']
         file_num = int(ret['file_num'])
         ret = {}
-        ret = dump_jointsplits(datadir, output_dir, file_size, maxT, trans_total, file_num + 1, magic)
+        ret = dump_jointsplits(datadir, output_dir, file_size, maxT, trans_total, file_num, magic)
         
         print "Total Z-files written: \t%d " % (int(ret['file_num']) - int(file_num))
         print  "utxo-{:05}.bin".format(file_num) + " - utxo-{:05}.bin".format(ret['file_num'])
