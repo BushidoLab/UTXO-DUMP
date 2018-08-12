@@ -98,7 +98,8 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             f.write(lengthStr) #write length of the transaction
             f.write(value)#write actual z-utxo
 
-            a.write("\"" + value + "\",")#write actual z-utxo
+            json = lengthStr = "{0:b}".format(value)
+            a.write("\"" + json + "\",\n")#write actual z-utxo
             a.write(value)
 
             globalTransactionCounter += 1
