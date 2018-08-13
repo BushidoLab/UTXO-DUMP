@@ -12,7 +12,7 @@ from utxo.script import unwitness
 from utxo.util import new_utxo_file, utxo_file_name
 from blockdb import read_blockfile
 
-
+import hashlib
 
 def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
     
@@ -82,26 +82,33 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     maxBlockFile = 9999
     blkFile = 0
     file_num = fileNumber
+    
+    m = hashlib.md5()
+    # m.update("Nobody inspects")
+    # m.update(" the spammish repetition")
+    # m.digest()
+    # m.digest_size
+    # m.block_size
 
     print("Extracting joinsplits from " + datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat")
     joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
     while len(joinsplits) != 0:
         f = new_utxo_file(output_dir, file_num)  #open a new file
-        a = new_utxo_file(output_dir + "/json", file_num)  #open a new file
-        a.write("[")
         for value in joinsplits:
             lengthStr = "{0:b}".format(len(value)) #bytes length of the transaction
             #format binary length in big-endian (32 bit) format
             if (len(lengthStr) < 32 ):
                 while len(lengthStr) < 32:
                     lengthStr = "{0:b}".format(0) + lengthStr
+            
+            m.update(value)
+            print("Original value: ")
+            print(hexlify(value))
+            print("Hashed value: ")
+            print(m.digest())
+            assert 0
             f.write(lengthStr) #write length of the transaction
-            f.write(value)#write actual z-utxo
-
-            json = lengthStr = "{0:b}".format(value)
-            a.write("\"" + json + "\",\n")#write actual z-utxo
-            a.write(value)
-
+            f.write(value)#write actual z-utxo 
             globalTransactionCounter += 1
             trans_counter += 1
             trans_z_total += 1
@@ -130,10 +137,6 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
                 break
         file_num += 1
         f.close()
-        a.write("]")
-        a.close()
-    a.write("]")   
-    a.close()
     f.close()
     print("##########################################")
     print 'Total Z written: \t%s' % trans_z_total

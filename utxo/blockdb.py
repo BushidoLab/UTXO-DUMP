@@ -287,7 +287,6 @@ class Block(object):
 
 def read_blockfile(name, expected_prefix):
     #note: keep track of the number of magics we've hit outside this function, iterate over them fresh for every block in this function
-    ret = []
     counter = 0
 
     #Open DB directory and limit to reading binary (rb)
