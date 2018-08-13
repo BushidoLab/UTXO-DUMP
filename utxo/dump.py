@@ -82,7 +82,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     maxBlockFile = 9999
     blkFile = 0
     file_num = fileNumber
-    
+    duplicates = 0
     
     # m.update("Nobody inspects")
     # m.update(" the spammish repetition")
@@ -103,31 +103,35 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
                     lengthStr = "{0:b}".format(0) + lengthStr
             m = hashlib.md5()
             m.update(value)
-            print("Original value: ")
-            print(hexlify(value))
-            print("Hashed value: ")
-            print(hexlify(m.digest()))
+            # print("Original value: ")
+            # print(hexlify(value))
+            # print("Hashed value: ")
+            # print(hexlify(m.digest()))
 
             if m.digest() in hashStore:
-                 assert 0
+                print("Found a duplicate transaction...skipping.")
+                duplicates += 1
+                joinsplits = joinsplits[1:] #remove duplicate 
+                continue
+
             hashStore[m.digest()] = 1
             f.write(lengthStr) #write length of the transaction
             f.write(value)#write actual z-utxo 
             globalTransactionCounter += 1
             trans_counter += 1
             trans_z_total += 1
-            print("Transaction: %d",  trans_counter)
-            print(hexlify(value))
-            print() 
-            if(blkFile >= 1 and trans_counter > 20):
-                print("Breaking from for loop")
-                break
+            # print("Transaction: %d",  trans_counter)
+            # print(hexlify(value))
+            # print() 
+            # if(blkFile >= 1 and trans_counter > 20):
+            #     print("Breaking from for loop")
+            #     break
             if maxT != 0 and trans_counter >= maxT:
                 break
         #remove objects from array that were written
-        if(blkFile >= 1):
-            print("Breaking from while loop")
-            break
+        # if(blkFile >= 1):
+        #     print("Breaking from while loop")
+        #     break
         joinsplits = joinsplits[trans_counter:]
         trans_counter = 0
         if(len(joinsplits) == 0 and (blkFile <= maxBlockFile)):
@@ -143,6 +147,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
         f.close()
     f.close()
     print("##########################################")
+    print 'Found duplicates: \t%d' % duplicates
     print 'Total Z written: \t%s' % trans_z_total
     return { 'trans_total': globalTransactionCounter, 'file_num': file_num }
 
