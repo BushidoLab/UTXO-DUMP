@@ -83,12 +83,13 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     blkFile = 0
     file_num = fileNumber
     
-    m = hashlib.md5()
+    
     # m.update("Nobody inspects")
     # m.update(" the spammish repetition")
     # m.digest()
     # m.digest_size
     # m.block_size
+    hashStore = {}
 
     print("Extracting joinsplits from " + datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat")
     joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
@@ -100,13 +101,16 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             if (len(lengthStr) < 32 ):
                 while len(lengthStr) < 32:
                     lengthStr = "{0:b}".format(0) + lengthStr
-            
+            m = hashlib.md5()
             m.update(value)
             print("Original value: ")
             print(hexlify(value))
             print("Hashed value: ")
             print(hexlify(m.digest()))
-            assert 0
+
+            if m.digest() in hashStore:
+                 assert 0
+            hashStore[m.digest()] = 1
             f.write(lengthStr) #write length of the transaction
             f.write(value)#write actual z-utxo 
             globalTransactionCounter += 1
