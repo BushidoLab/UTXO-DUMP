@@ -105,7 +105,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             print("Original value: ")
             print(hexlify(value))
             print("Hashed value: ")
-            print(m.digest())
+            print(hexlify(m.digest()))
             assert 0
             f.write(lengthStr) #write length of the transaction
             f.write(value)#write actual z-utxo 
