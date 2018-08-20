@@ -32,9 +32,6 @@ parser.add_argument('--maxutxos', type=int, default=0)
 
 args = parser.parse_args()
 
-print("TEST")
-print(args.bitcoind_datadir)
-# print(args.utxo_dir)
 
 if not isdir(args.utxo_dir):
     raise Exception("invalid utxo_dir")

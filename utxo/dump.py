@@ -83,11 +83,6 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     file_num = fileNumber
     duplicates = 0
     
-    # m.update("Nobody inspects")
-    # m.update(" the spammish repetition")
-    # m.digest()
-    # m.digest_size
-    # m.block_size
     hashStore = {}
 
     print("Extracting joinsplits from " + datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat")
@@ -103,10 +98,6 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
                     lengthStr = "{0:b}".format(0) + lengthStr
             m = hashlib.md5()
             m.update(value)
-            # print("Original value: ")
-            # print(hexlify(value))
-            # print("Hashed value: ")
-            # print(hexlify(m.digest()))
             md5_hash = m.digest()
 
             if md5_hash in hashStore:
@@ -121,18 +112,11 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             globalTransactionCounter += 1
             trans_counter += 1
             trans_z_total += 1
-            # print("Transaction: %d",  trans_counter)
-            # print(hexlify(value))
-            # print() 
-            # if(blkFile >= 1 and trans_counter > 20):
-            #     print("Breaking from for loop")
-            #     break
+
             if maxT != 0 and trans_counter >= maxT:
                 break
+                
         #remove objects from array that were written
-        # if(blkFile >= 1):
-        #     print("Breaking from while loop")
-        #     break
         joinsplits = joinsplits[trans_counter:]
         trans_counter = 0
         if(len(joinsplits) == 0 and (blkFile <= maxBlockFile)):
