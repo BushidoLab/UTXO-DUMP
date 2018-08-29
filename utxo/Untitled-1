@@ -1,0 +1,30 @@
+./dump.py z-blocks/anon/testnet z-dump/anon/testnet --verbose=True --reindex=True --bitcoind /Users/nlevo/Desktop/Crypto/KevZCL/zcl/src/zcashd --blockheight=1000 --maxutxos=3500 --file_num=1 --z_address=True --network=testnet --coin=zcl
+
+
+dump_transactions(datadir=args.bitcoind_datadir, output_dir=args.utxo_dir, file_size=args.nperfile, convert_segwit=args.transform_segwit, maxT=args.maxutxos, debug=args.verbose, file_num=args.file_num, z_address=args.z_address, network=args.network, coin=args.coin)
+
+
+BITCOIN
+./dump.py --bitcoind_datadir="/root/.bitcoin" /root/bitcoin-utxo-upto-block-517490 --verbose=0 --reindex=1 --bitcoind /root/bitcoin/src/bitcoind --blockheight=517490 --maxutxos=10000 --file_num=1 --z_address=0 --t_address=1 --network=mainnet --coin=bitcoin 
+
+WITHOUT REINDEX
+./dump.py --bitcoind_datadir="/root/.bitcoin" /root/bitcoin-utxo-upto-block-517490 --verbose=0 --maxutxos=10000 --file_num=1 --z_address=0 --t_address=1 --network=mainnet --coin=bitcoin 
+
+ZCL-T
+./dump.py --bitcoind_datadir="/root/.zclassic" /root/zcl-utxo-upto-block-371257 --verbose=0  --maxutxos=10000 --file_num=5142 --z_address=0 --t_address=1 --network=mainnet --coin=zcl 
+
+ZCL-Z
+./dump.py --bitcoind_datadir="/root/.zclassic" /root/zcl-joinsplits-upto-block-371257 --verbose=0  --maxutxos=50 --file_num=5255 --z_address=1 --t_address=0 --network=mainnet --coin=zcl 
+
+
+Header Hash: 073455058fcb3f1477d71c05d398ccc1df93b930be347311950051b26dc1a037
+Nonce: 0000000000000000000000000000000000000000000000000000000000000015
+068030347fd2d17011b479df02653dbc69715cf9075f64e74e1ba1de2d7ee4ea293297c6c221f6176ee49e8517a41720783508da6a434412d8ca15fd93bdf1a7d8954caf3d1deb7ef0b714167ff3fdff3a4a7edc0ea7eb41980275f5d54ea16781cd8c76
+
+
+ZCL-Z
+./dump.py --bitcoind_datadir="/root/.zclassic" /root/zcl-joinsplits-upto-block-371257 --verbose=0  --maxutxos=50 --file_num=5255 --z_address=1 --t_address=0 --network=mainnet --coin=zcl 
+
+
+ZCL-Z
+./dump.py --bitcoind_datadir="/Users/nlevo/Library/Application\ Support/Anon/testnet4" "/Users/nlevo/Library/Application\ Support/Anon/anon-testnet-utxo-snapshot" --verbose=0  --maxutxos=50 --file_num=1 --z_address=1 --t_address=0 --network=testnet --coin=anon 

@@ -1,0 +1,1 @@
+./dump.py --bitcoind_datadir="../.zclassic" /root/testing-zutxo --nperfile=5000 --transform_segwit=0 --verbose=1 --z_address=1 --coin='zcl' --file_num=1836 --network='mainnet' --maxutxos=500 --t_address 0

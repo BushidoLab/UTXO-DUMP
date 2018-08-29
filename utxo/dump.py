@@ -109,12 +109,12 @@ def dump_joinsplits(datadir, output_dir, n, maxT, fileNumber, magic):
             f.write(value)#write actual z-utxo
             # append first sha256(transaction + its length)
             sha = hashlib.sha256()
-            sha.update(value + lengthStr)
+            sha.update(lengthStr + value)
             sha256_hash = sha.digest()
-            print("SHA256: ", sha256_hash)
-            f.write(sha256_hash)
-            f.close()
-            return
+            # print("SHA256: ", hexlify(sha256_hash))
+            # print("SHA256: ", hexlify(sha256_hash[::-1]))
+            f.write(sha256_hash[::-1])
+
             trans_counter_perfile += 1
             trans_z_total += 1
 
@@ -144,7 +144,7 @@ def dump_joinsplits(datadir, output_dir, n, maxT, fileNumber, magic):
     # sha = hashlib.sha256()
     # sha.update(value)
     # sha256_hash = sha.digest()
-    f.close()
+    # f.close()
 
     print("##########################################")
     print 'Found duplicates: \t%d' % duplicates

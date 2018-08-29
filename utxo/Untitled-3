@@ -1,0 +1,12 @@
+./dump.py --bitcoind_datadir="../.zclassic" /root/zutxo-50-perfile --nperfile=5000 --transform_segwit=0 --verbose=1 --z_address=1 --coin='zcl' --file_num=1 --network='mainnet' --maxutxos=50 --t_address=0
+
+
+./dump.py --bitcoind_datadir="../.zclassic" /root/zcl-t-10000-perfile --nperfile=5000 --transform_segwit=1 --verbose=0 --z_address=0 --coin='zcl' --file_num=4892 --network='mainnet' --maxutxos=10000 --t_address=1
+
+
+a=5001
+for i in *.bin; do
+  new=$(printf "utxo-%05d.bin" "$a") #05 pad to length of 5
+  mv -i -- "$i" "$new"
+  let a=a+1
+done
