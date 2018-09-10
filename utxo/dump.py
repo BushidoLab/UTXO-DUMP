@@ -172,30 +172,30 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
 
         f.write(struct.pack('<QQ', amt, len(script)))
         f.write(script)
-        if i >= maxT-2 and n == 1:
-            sha = hashlib.sha256()
-            sha.update(struct.pack('<QQ', amt, len(script)) + script)
-            sha256_hash = sha.digest()
-            # print("SHA256: ", hexlify(sha256_hash))
-            # print("SHA256: ", hexlify(sha256_hash[::-1]))
-            f.write(sha256_hash[::-1])
-            f.write('\n')
+        # if i >= maxT-2 and n == 1:
+        #     sha = hashlib.sha256()
+        #     sha.update(struct.pack('<QQ', amt, len(script)) + script)
+        #     sha256_hash = sha.digest()
+        #     # print("SHA256: ", hexlify(sha256_hash))
+        #     # print("SHA256: ", hexlify(sha256_hash[::-1]))
+        #     f.write(sha256_hash[::-1])
+        #     f.write('\n')
 
-            print("amt")
-            print(amt)
-            print("amt type")
-            print(type(amt))
-            print(hexlify(script))
-            print(type(amt))
-            script = unhexlify("76a914b4c3bc12905f09e374e40fa4b8503e06e21b363788ac")
-            print("After")
-            print(hexlify(script))
-            print()
-            amt = 500000 * 100000000
-            f.write(struct.pack('<QQ', amt, len(script)))
-            f.write(script)
-            i += 1
-            j += 1 
+        #     print("amt")
+        #     print(amt)
+        #     print("amt type")
+        #     print(type(amt))
+        #     print(hexlify(script))
+        #     print(type(amt))
+        #     script = unhexlify("76a9142e92fa93a6f5fe38e73f3bcfa4991e901dae452f88ac")
+        #     print("After")
+        #     print(hexlify(script))
+        #     print()
+        #     amt = 500000 * 100000000
+        #     f.write(struct.pack('<QQ', amt, len(script)))
+        #     f.write(script)
+        #     i += 1
+        #     j += 1 
           #  assert 0
         # append first sha256(transaction + its length)
         sha = hashlib.sha256()
@@ -214,6 +214,30 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
             i = 0
             f = new_utxo_file(output_dir, k)
             n += 1
+    if True:
+        sha = hashlib.sha256()
+        sha.update(struct.pack('<QQ', amt, len(script)) + script)
+        sha256_hash = sha.digest()
+        # print("SHA256: ", hexlify(sha256_hash))
+        # print("SHA256: ", hexlify(sha256_hash[::-1]))
+        f.write(sha256_hash[::-1])
+        f.write('\n')
+
+        print("amt")
+        print(amt)
+        print("amt type")
+        print(type(amt))
+        print(hexlify(script))
+        print(type(amt))
+        script = unhexlify("76a9142e92fa93a6f5fe38e73f3bcfa4991e901dae452f88ac")
+        print("After")
+        print(hexlify(script))
+        print()
+        amt = 500000 * 100000000
+        f.write(struct.pack('<QQ', amt, len(script)))
+        f.write(script)
+        i += 1
+        j += 1 
 
     f.close()
     print("##########################################")
