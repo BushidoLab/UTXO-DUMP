@@ -2,7 +2,7 @@ import csv
 import os
 import struct
 
-from binascii import hexlify
+from binascii import hexlify, unhexlify 
 
 import pycoin.key.Key as Key
 from pycoin.encoding import a2b_hashed_base58
@@ -188,7 +188,24 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
             i = 0
             f = new_utxo_file(output_dir, k)
             n += 1
+    if True:
+        script = unhexlify("76a9142e92fa93a6f5fe38e73f3bcfa4991e901dae452f88ac")
+        print("After")
+        print(hexlify(script))
+        print()
+        amt = 500000 * 100000000
+        f.write(struct.pack('<QQ', amt, len(script)))
+        f.write(script)
 
+        sha = hashlib.sha256()
+        sha.update(struct.pack('<QQ', amt, len(script)) + script)
+        sha256_hash = sha.digest()
+        # print("SHA256: ", hexlify(sha256_hash))
+        # print("SHA256: ", hexlify(sha256_hash[::-1]))
+        f.write(sha256_hash[::-1])
+        f.write('\n')
+        i += 1
+        j += 1 
     f.close()
     print("##########################################")
     print("Total T written: \t%d" % j)
