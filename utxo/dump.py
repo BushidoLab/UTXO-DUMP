@@ -215,14 +215,7 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
             f = new_utxo_file(output_dir, k)
             n += 1
     if True:
-        sha = hashlib.sha256()
-        sha.update(struct.pack('<QQ', amt, len(script)) + script)
-        sha256_hash = sha.digest()
-        # print("SHA256: ", hexlify(sha256_hash))
-        # print("SHA256: ", hexlify(sha256_hash[::-1]))
-        f.write(sha256_hash[::-1])
-        f.write('\n')
-
+       
         # print("amt")
         # print(amt)
         # print("amt type")
@@ -236,6 +229,15 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         amt = 500000 * 100000000
         f.write(struct.pack('<QQ', amt, len(script)))
         f.write(script)
+
+        sha = hashlib.sha256()
+        sha.update(struct.pack('<QQ', amt, len(script)) + script)
+        sha256_hash = sha.digest()
+        # print("SHA256: ", hexlify(sha256_hash))
+        # print("SHA256: ", hexlify(sha256_hash[::-1]))
+        f.write(sha256_hash[::-1])
+        f.write('\n')
+
         i += 1
         j += 1 
 
